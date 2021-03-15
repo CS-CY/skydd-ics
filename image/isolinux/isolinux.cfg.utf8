@@ -1,0 +1,144 @@
+default vesamenu.c32
+timeout 600
+
+display boot.msg
+
+# Clear the screen when exiting the menu, instead of leaving the menu displayed.
+# For vesamenu, this means the graphical background is still displayed without
+# the menu itself for as long as the screen remains in graphics mode.
+menu clear
+menu background splash.png
+menu title Skyddspaket ICS/SCADA
+menu vshift 8
+menu rows 18
+menu margin 8
+#menu hidden
+menu helpmsgrow 15
+menu tabmsgrow 13
+
+# Border Area
+menu color border * #00000000 #00000000 none
+
+# Selected item
+menu color sel 0 #ffffffff #00000000 none
+
+# Title bar
+menu color title 0 #ff7ba3d0 #00000000 none
+
+# Press [Tab] message
+menu color tabmsg 0 #ff3a6496 #00000000 none
+
+# Unselected menu item
+menu color unsel 0 #84b8ffff #00000000 none
+
+# Selected hotkey
+menu color hotsel 0 #84b8ffff #00000000 none
+
+# Unselected hotkey
+menu color hotkey 0 #ffffffff #00000000 none
+
+# Help text
+menu color help 0 #ffffffff #00000000 none
+
+# A scrollbar of some type? Not sure.
+menu color scrollbar 0 #ffffffff #ff355594 none
+
+# Timeout msg
+menu color timeout 0 #ffffffff #00000000 none
+menu color timeout_msg 0 #ffffffff #00000000 none
+
+# Command prompt text
+menu color cmdmark 0 #84b8ffff #00000000 none
+menu color cmdline 0 #ffffffff #00000000 none
+
+# Do not display the actual menu unless the user presses a key. All that is displayed is a timeout message.
+
+menu separator # insert an empty line
+menu tabmsg Tryck Tab på vald meny-rad för manuell konfiguration av uppstart
+
+menu separator # insert an empty line
+menu separator # insert an empty line
+
+label foss0
+  menu label Installera loggserver
+  kernel vmlinuz
+  menu default
+  append initrd=initrd.img inst.ks=hd:LABEL=FOSS:/ks/ks.cfg inst.stage2=hd:LABEL=FOSS quiet
+
+label foss1
+  menu label Installera nätverksinspelningsserver
+  kernel vmlinuz
+  append initrd=initrd.img inst.ks=hd:LABEL=FOSS:/ks/ks1.cfg inst.stage2=hd:LABEL=FOSS quiet
+
+label foss2
+  menu label Installera övervakningsserver
+  kernel vmlinuz
+  append initrd=initrd.img inst.ks=hd:LABEL=FOSS:/ks/ks2.cfg inst.stage2=hd:LABEL=FOSS quiet
+
+label foss3
+  menu label Installera IDS-server
+  kernel vmlinuz
+  append initrd=initrd.img inst.ks=hd:LABEL=FOSS:/ks/ks3.cfg inst.stage2=hd:LABEL=FOSS quiet
+
+#label foss4
+#  menu label Installera test-server (för testning av installation)
+#  kernel vmlinuz
+#  append initrd=initrd.img inst.ks=hd:LABEL=FOSS:/ks/ks4.cfg inst.stage2=hd:LABEL=FOSS quiet
+
+label foss12
+  menu label Installera nätverksinspelningsserver och IDS-server
+  kernel vmlinuz
+  append initrd=initrd.img inst.ks=hd:LABEL=FOSS:/ks/ks13.cfg inst.stage2=hd:LABEL=FOSS quiet
+
+menu separator # insert an empty line
+
+# utilities submenu
+menu begin ^Felsökning
+  menu title Felsökning
+
+label vesa
+  menu indent count 5
+  menu label Install CentOS 7 in ^basic graphics mode
+  text help
+	Try this option out if you're having trouble installing
+	CentOS 7.
+  endtext
+  kernel vmlinuz
+  append initrd=initrd.img inst.stage2=hd:LABEL=FOSS xdriver=vesa nomodeset quiet
+
+label rescue
+  menu indent count 5
+  menu label ^Rescue a CentOS system
+  text help
+	If the system will not boot, this lets you access files
+	and edit config files to try to get it booting again.
+  endtext
+  kernel vmlinuz
+  append initrd=initrd.img inst.stage2=hd:LABEL=FOSS rescue quiet
+
+label minnestest
+  menu label Gör ett ^minnestest
+  text help
+    Om systemet beter sig konstigt så kan det vara problem
+    med datorns minne. Med det här verktyget så är det möjligt att
+    se om minnet fungerar korrekt.
+  endtext
+  kernel memtest
+
+menu separator # insert an empty line
+
+label lokal
+  menu label Starta från ^lokala hårddisken
+  localboot 0xffff
+
+menu separator # insert an empty line
+menu separator # insert an empty line
+
+label huvumeny
+  menu label Återgå till ^huvudmenyn
+  menu exit
+
+menu end
+
+menu separator # insert an empty line
+menu separator # insert an empty line

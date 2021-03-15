@@ -1,0 +1,13 @@
+[Unit]
+Description=IDS Service on %I
+After=network.target
+
+[Service]
+ExecStart=/usr/sbin/snort -i %I -I -u snort -g snort -c /etc/snort/foss_snort.conf
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target
+

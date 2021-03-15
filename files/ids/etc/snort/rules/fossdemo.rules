@@ -1,0 +1,17 @@
+ipvar SVKDEMO_KONTROLLRUM 10.10.10.0/24
+ipvar SVKDEMO_PLC 10.10.10.10
+
+# Alert on gateopen cmd from unauthorized client
+alert tcp !$SVKDEMO_KONTROLLRUM any -> $SVKDEMO_PLC 102 (msg: "S7 Communication from Unauthorized Client";sid:1111305;priority:1;rev:1;)
+
+# write var, open gate
+alert tcp !$SVKDEMO_KONTROLLRUM any -> $SVKDEMO_PLC 102 (content: "|03 00|"; within: 200; pcre: "/\x32\x01\x00\x00\x02\x06\x00\x12\x00\x05\x05\x01\x12\x0e\xb2\xff\x00\x00\x00\x52\x78\x04\x1f\x0f\x40\x00\x00\x11\xff\x03\x00\x01\x01/"; msg: "S7 Write Open Gate from Unauthorized Client";sid:1111306;priority:1;rev:1;)
+
+# write var, close gate
+alert tcp !$SVKDEMO_KONTROLLRUM any -> $SVKDEMO_PLC 102 (content: "|03 00|"; within: 200; pcre: "/\x32\x01\x00\x00\x02\x06\x00\x12\x00\x05\x05\x01\x12\x0e\xb2\xff\x00\x00\x00\x52\x78\x04\x1f\x0f\x40\x00\x00\x11\xff\x03\x00\x01\x00/"; msg: "S7 Write Close Gate from Unauthorized Client";sid:1111307;priority:1;rev:1;)
+
+# write var, open generator
+alert tcp !$SVKDEMO_KONTROLLRUM any -> $SVKDEMO_PLC 102 (content: "|03 00|"; within: 200; pcre: "/\x32\x01\x00\x00\x02\x03\x00\x12\x00\x05\x05\x01\x12\x0e\xb2\xff\x00\x00\x00\x52\xea\x2d\xb0\xd9\x40\x00\x00\x10\xff\x03\x00\x01\x01/"; msg: "S7 Write Open Generator from Unauthorized Client";sid:1111308;priority:1;rev:1;)
+
+# write var, close generator
+alert tcp !$SVKDEMO_KONTROLLRUM any -> $SVKDEMO_PLC 102 (content: "|03 00|"; within: 200; pcre: "/\x32\x01\x00\x00\x02\x02\x00\x12\x00\x05\x05\x01\x12\x0e\xb2\xff\x00\x00\x00\x52\xea\x2d\xb0\xd9\x40\x00\x00\x10\xff\x03\x00\x01\x00/"; msg: "S7 Write Close Generator from Unauthorized Client";sid:1111309;priority:1;rev:1;)

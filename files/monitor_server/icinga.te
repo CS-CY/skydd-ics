@@ -1,0 +1,24 @@
+module icinga 1.0;
+type icinga_etc_t;
+type icingaweb_etc_t;
+type icinga_var_run_t;
+files_type(icinga_etc_t)
+files_type(icingaweb_etc_t)
+files_type(icinga_var_run_t)
+
+require {
+    type httpd_t;
+    class file { read write create open getattr setattr unlink };
+    class dir { read write create add_name remove_name getattr setattr open };
+    class lnk_file { read getattr create unlink };
+    class tcp_socket { send_msg recv_msg name_connect };
+    class fifo_file { getattr open write };
+}
+
+#============= httpd_t ==============
+allow httpd_t icingaweb_etc_t:file { read write create getattr setattr open unlink };
+allow httpd_t icingaweb_etc_t:dir { read write create add_name remove_name read getattr setattr };
+allow httpd_t icingaweb_etc_t:lnk_file { read create getattr unlink };
+allow httpd_t icinga_var_run_t:fifo_file { getattr open write };
+corenet_tcp_sendrecv_postgresql_port(httpd_t)
+corenet_tcp_connect_postgresql_port(httpd_t)

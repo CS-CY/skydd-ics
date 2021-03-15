@@ -1,0 +1,37 @@
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+-N LOGGING
+
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+{% if item == "iptables" %}
+-A INPUT -p icmp -j ACCEPT
+{% else %}
+-A INPUT -p ipv6-icmp -j ACCEPT
+{% endif %}
+
+-A INPUT -i lo -j ACCEPT
+
+{% if not disable_sshd|bool %}
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
+{% endif %}
+
+{% if simple_log %}
+-A INPUT -m state --state NEW -p tcp --dport 514 -j ACCEPT
+-A INPUT -m state --state NEW -p udp --dport 514 -j ACCEPT
+{% endif %}
+
+{% if expose_https %}
+-A INPUT -m state --state NEW -p tcp --dport 443 -j ACCEPT
+{% endif %}
+
+-A INPUT -j LOGGING
+{% if item == "iptables" %}
+-A LOGGING -m limit --limit 2/min -j LOG --log-prefix "iptables-dropped: " --log-level 4
+{% else %}
+-A LOGGING -m limit --limit 2/min -j LOG --log-prefix "ip6tables-dropped: " --log-level 4
+{% endif %}
+-A LOGGING -j DROP
+-A FORWARD -j LOGGING
+COMMIT

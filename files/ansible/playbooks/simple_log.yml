@@ -1,0 +1,11 @@
+---
+
+- import_playbook: foss.yml
+  vars:
+    simple_log: True
+
+- hosts: foss
+  gather_facts: no
+  connection: local
+  roles:
+    - { role: simple_log }

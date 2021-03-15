@@ -1,0 +1,8 @@
+create database snort;
+grant all on snort.* to snort@'localhost' IDENTIFIED BY 'XXXXXX';
+create database snorby;
+grant all on snorby.* to snort@'localhost' IDENTIFIED BY 'XXXXXX';
+flush privileges;
+use snort;
+source create_mysql;
+show tables;

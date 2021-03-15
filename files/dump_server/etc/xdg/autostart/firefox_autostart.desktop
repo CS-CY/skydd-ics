@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/firefox http://127.0.0.1/foss/doc/index.html#nätverksinspelningsserver-1
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name[sv_SE]=Firefox
+Name=Firefox
+Comment[sv_SE]=
+Comment=

@@ -1,0 +1,3 @@
+/etc/icinga2(/.*)? gen_context(system_u:object_r:icinga_etc_t,s0)
+/etc/icingaweb2(/.*)? gen_context(system_u:object_r:icingaweb_etc_t,s0)
+/var/run/icinga2(/.*)? gen_context(system_u:object_r:icinga_var_run_t,s0)

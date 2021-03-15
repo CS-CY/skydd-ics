@@ -1,0 +1,92 @@
+---
+- name: enable and start services
+  systemd:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  loop:
+    - mariadb
+    - httpd24-httpd
+- name: run maria secure installation
+  script: /root/maria_secure_installation.sh
+  register: maria
+  args:
+    creates: /root/maria_secure_installation.sh.done
+  notify: restart mariadb
+- name: mariadb listen localhost
+  ini_file:
+    path: /etc/my.cnf
+    section: mysqld
+    option: bind-address
+    value: 127.0.0.1
+  notify: restart mariadb
+- name: touch file when maria_secure_installation is done
+  file:
+    path: /root/maria_secure_installation.sh.done
+    state: touch
+  when: maria is not skipped and maria.rc == 0
+- name: add snort group
+  group:
+    name: snort
+    system: True
+- name: add snort user
+  user:
+    name: snort
+    group: snort
+    system: True
+- name: run barnyard and snorby install
+  script: /root/barn_snor.sh
+  register: barn_snor
+  args:
+    creates: /root/barn_snor.sh.done
+- name: touch file when barn_snor is done
+  file:
+    path: /root/barn_snor.sh.done
+    state: touch
+  when: barn_snor is not skipped and barn_snor.rc == 0
+- name: ensure dir exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  loop:
+    - /var/log/barnyard2
+- name: correct permissions in log directory
+  file:
+    path: /var/log/snort
+    state: directory
+    mode: '0775'
+    owner: root
+    group: snort
+- name: set dir owner
+  file:
+    path: /var/log/barnyard2/
+    owner: snort
+    group: snort
+    state: directory
+- name: set file perms
+  file:
+    path: /etc/snort/.mariadb_snortpw
+    mode: 0600
+- name: check if foss_snort.pp exist
+  stat:
+    path: /usr/share/selinux/packages/foss-ids/foss_snort.pp
+  register: s
+- name: check if foss_snort module is installed
+  shell: |
+    set -o pipefail
+    semanage module -l | grep foss_snort
+  register: result
+  changed_when: result.rc != 0
+  failed_when: result.rc > 1
+- name: Install selinux policy to allow NetWorkManager to start a snort service
+  command: /usr/sbin/semodule -i /usr/share/selinux/packages/foss-ids/foss_snort.pp
+  when: s.stat.exists and result.rc != 0
+- name: enable services
+  systemd:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  loop:
+    - barnyard2
+    - snorby

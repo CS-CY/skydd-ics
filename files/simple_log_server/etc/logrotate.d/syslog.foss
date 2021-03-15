@@ -1,0 +1,13 @@
+/var/log/incoming
+{
+    missingok
+    rotate 10000
+    size 5M
+    dateext
+    dateformat -%Y%m%d-%s
+    compress
+    sharedscripts
+    postrotate
+        /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` || true
+    endscript
+}

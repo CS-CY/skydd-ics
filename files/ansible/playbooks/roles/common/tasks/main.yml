@@ -1,0 +1,69 @@
+---
+- name: Disable OpenSSH Server
+  systemd:
+    name: sshd
+    enabled: no
+    state: stopped
+  when: disable_sshd|bool
+
+- name: Disable firewalld (because we use iptables instead)
+  systemd:
+    name: firewalld
+    enabled: no
+
+# No matter what we always want to open up port 514 if the simple_log rpm is installed
+# ..even if we are right now running ansible from %post of foss-traffic
+#
+- name: check if /opt/.foss-simple_log exist
+  stat:
+    path: /opt/.foss-simple_log
+  register: s
+- name: set simple_log to true when it is installed
+  set_fact:
+    simple_log: True
+  when: s.stat.exists
+
+- name: install common default firewall rules
+  template:
+    src: etc/sysconfig/iptables.j2
+    dest: "/etc/sysconfig/{{ item }}"
+  loop:
+    - iptables
+    - ip6tables
+  notify:
+    - reload iptables
+- name: disable services
+  systemd:
+    name: "{{ item }}"
+    enabled: no
+    state: stopped
+  loop:
+    - rpcbind.socket
+    - rpcbind
+
+- name: Enable iptables, ip6tables, httpd
+  systemd:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  loop:
+    - iptables
+    - ip6tables
+    - httpd
+  ignore_errors: yes
+
+- name: get all home dirs
+  find:
+    paths: /home
+  register: home_dirs
+- name: copy test script to root
+  template:
+    src: root/find_install_errors.sh
+    dest: /root/find_install_errors.sh
+- name: Make sure all currently installed .desktop-files are on all users desktop
+  copy:
+    src: /etc/skel/Desktop/
+    dest: "{{ item }}"
+  loop:
+    - home_dirs
+  ignore_errors: yes

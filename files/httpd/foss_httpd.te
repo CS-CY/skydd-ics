@@ -1,0 +1,32 @@
+module foss_httpd 1.0;
+
+require {
+    type httpd_sys_script_t;
+    type httpd_unit_file_t;
+    type init_t;
+    type iptables_unit_file_t;
+    type mysqld_unit_file_t;
+    type system_dbusd_t;
+    type systemd_unit_file_t;
+    class service { status };
+    class dbus { send_msg };
+    class dir { search getattr };
+    class lnk_file { read };
+    class unix_stream_socket { connectto };
+}
+
+#============= httpd_sys_script_t  ==============
+allow httpd_sys_script_t httpd_unit_file_t:service status;
+allow httpd_sys_script_t init_t:dbus send_msg;
+allow httpd_sys_script_t init_t:dir search;
+allow httpd_sys_script_t init_t:lnk_file read;
+allow httpd_sys_script_t iptables_unit_file_t:service status;
+allow httpd_sys_script_t system_dbusd_t:dbus send_msg;
+
+allow httpd_sys_script_t system_dbusd_t:unix_stream_socket connectto;
+allow httpd_sys_script_t systemd_unit_file_t:dir getattr;
+allow httpd_sys_script_t systemd_unit_file_t:service status;
+allow httpd_sys_script_t mysqld_unit_file_t:service status;
+
+#============= init_t ==============
+allow init_t httpd_sys_script_t:dbus send_msg;

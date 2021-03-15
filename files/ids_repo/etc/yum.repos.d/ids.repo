@@ -1,0 +1,25 @@
+[rhscl-httpd24-epel-7-x86_64]
+name=Apache httpd 2.4.12 - epel-7-x86_64
+baseurl=https://skyddics.msb.se/repos/httpd24
+enabled=1
+gpgcheck=0
+[rhscl-rh-passenger40-epel-7-x86_64]
+name=Passenger 4.0.50 - epel-7-x86_64
+baseurl=https://skyddics.msb.se/repos/rh-passenger40
+enabled=1
+gpgcheck=0
+[rhscl-ruby193-epel-7-x86_64]
+name=Ruby193 - epel-7-x86_64
+baseurl=https://skyddics.msb.se/repos/ruby193
+enabled=1
+gpgcheck=0
+[rhscl-v8314-epel-7-x86_64]
+name=V8 3.14.5.10 - epel-7-x86_64
+baseurl=https://skyddics.msb.se/repos/v8314
+enabled=1
+gpgcheck=0
+[snort]
+name=snort el-7-x86_64
+baseurl=https://skyddics.msb.se/repos/snort
+enabled=1
+gpgcheck=0

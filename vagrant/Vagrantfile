@@ -1,0 +1,187 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+ENV['DUMP_IP']    = '192.168.0.30'
+ENV['LOG_IP']     = '192.168.0.31'
+ENV['MONITOR_IP'] = '192.168.0.32'
+ENV['IDS_IP']     = '192.168.0.33'
+ENV['TEST_IP']    = '192.168.0.29'
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "centos/7"
+  config.vm.box_version = ">=1905.1"
+  config.vm.synced_folder "..", "/vagrant", type: "rsync", rsync__exclude: ".git/", "rsync__args": "-a"
+  config.vm.provider "vmware_fusion" do |v|
+    v.vmx["memsize"]  = "2048"
+    v.vmx["numvcpus"] = "2"
+    v.gui             = true
+  end
+  config.vm.provider :virtualbox do |v|
+    v.memory = 2048
+    v.gui = true
+  end
+  config.vm.provider :libvirt do |libvirt|
+    libvirt.memory = "2048"
+  end
+  config.vm.provision "file", source: "RPM-GPG-KEY-EPEL-7", destination: "/home/vagrant/RPM-GPG-KEY-EPEL-7"
+  config.vm.provision "shell", inline: <<-SHELL
+    rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+    cp /home/vagrant/RPM-GPG-KEY-EPEL-7 /etc/pki/rpm-gpg
+    rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
+    cp /vagrant/files/repo/etc/yum.repos.d/skydd-ics.repo /etc/yum.repos.d
+    cp /vagrant/files/repo/etc/pki/rpm-gpg/RPM-GPG-KEY-skydd_ics /etc/pki/rpm-gpg
+    rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-skydd_ics
+    yum install -y epel-release
+    yum install -y centos-release-scl
+    rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-SIG-SCLo
+    yum install -y perl rpm-build selinux-policy-devel pandoc texlive mg vim ansible
+    yum install -y foss-httpd
+    sed -i 's/^Listen 127.0.0.1:80/Listen 80/g' /etc/httpd/conf/httpd.conf
+    systemctl restart httpd
+
+  SHELL
+#################
+# dump server
+  config.vm.define "dump" do |dump|
+    dump.vm.network "public_network",
+	  auto_config: false,
+	  ip: "#{ENV['DUMP_IP']}",
+      bridge: "virbr2",
+      dev: "virbr2",
+      mode: "bridge",
+      type: "bridge",
+      use_dhcp_assigned_default_route: true
+    dump.vm.provision :shell do |s|
+      s.path = "ipconf.sh"
+      s.env  = {IP:ENV['DUMP_IP']}
+    end
+    dump.vm.provision "shell", inline: <<-SHELL
+      hostnamectl set-hostname dump
+      cd /vagrant/rpms
+      yum install -y foss-traffic-capture-*.noarch.rpm
+      /usr/bin/ansible-playbook -i /opt/ansible/inventory.yml /opt/ansible/playbooks/traffic.yml
+      iptables -F
+      systemctl start sshd
+      systemctl enable sshd
+      systemctl restart network
+    SHELL
+  end
+#################
+# log server
+  config.vm.define "log" do |log|
+    log.vm.network "public_network",
+	  auto_config: false,
+	  ip: "#{ENV['LOG_IP']}",
+      bridge: "virbr2",
+      dev: "virbr2",
+      mode: "bridge",
+      type: "bridge",
+      use_dhcp_assigned_default_route: true
+    log.vm.provision :shell do |s|
+      s.path = "ipconf.sh"
+      s.env  = {IP:ENV['LOG_IP']}
+    end
+    log.vm.provision "shell", inline: <<-SHELL
+      hostnamectl set-hostname log
+      yum -y install foss-simple-log-server
+      /usr/bin/ansible-playbook -i /opt/ansible/inventory.yml /opt/ansible/playbooks/simple_log.yml
+      iptables -F
+      systemctl start sshd
+      systemctl enable sshd
+      systemctl restart network
+    SHELL
+  end
+#################
+# ids server
+  config.vm.define "ids" do |ids|
+    ids.vm.network "public_network",
+	  auto_config: false,
+	  ip: "#{ENV['IDS_IP']}",
+      bridge: "virbr2",
+      dev: "virbr2",
+      mode: "bridge",
+      type: "bridge",
+      use_dhcp_assigned_default_route: true
+    ids.vm.provision :shell do |s|
+      s.path = "ipconf.sh"
+      s.env  = {IP:ENV['IDS_IP']}
+    end
+    ids.vm.provision "shell", inline: <<-SHELL
+      hostnamectl set-hostname ids
+      yum install -y foss-ids-repo
+      yum install -y foss-ids
+      /usr/bin/ansible-playbook -i /opt/ansible/inventory.yml /opt/ansible/playbooks/ids.yml
+      sed -i 's/^Listen 127.0.0.1:81/Listen 81/g' /opt/rh/httpd24/root/etc/httpd/conf/httpd.conf
+      systemctl restart httpd24-httpd
+      iptables -F
+      systemctl start sshd
+      systemctl enable sshd
+      systemctl restart network
+    SHELL
+  end
+#################
+# monitor server
+  config.vm.define "monitor" do |monitor|
+    monitor.vm.network "public_network",
+	  auto_config: false,
+	  ip: "#{ENV['MONITOR_IP']}",
+      bridge: "virbr2",
+      dev: "virbr2",
+      mode: "bridge",
+      type: "bridge",
+      use_dhcp_assigned_default_route: true
+    monitor.vm.provision :shell do |s|
+      s.path = "ipconf.sh"
+      s.env  = {IP:ENV['MONITOR_IP']}
+    end
+    monitor.vm.provision "shell", inline: <<-SHELL
+      hostnamectl set-hostname monitor
+      yum install -y foss-icinga-repo
+      yum install -y foss-monitor-server
+      /usr/bin/ansible-playbook -i /opt/ansible/inventory.yml /opt/ansible/playbooks/monitor.yml
+      systemctl start first-boot.service
+      iptables -F
+      systemctl start sshd
+      systemctl enable sshd
+      systemctl restart network
+    SHELL
+  end
+#################
+# test server
+  config.vm.define "test" do |test|
+    test.vm.network "public_network",
+	  auto_config: false,
+	  ip: "#{ENV['TEST_IP']}",
+      bridge: "virbr2",
+      dev: "virbr2",
+      mode: "bridge",
+      type: "bridge",
+      use_dhcp_assigned_default_route: true
+    test.vm.provision :shell do |s|
+      s.path = "ipconf.sh"
+      s.env  = {IP:ENV['TEST_IP']}
+    end
+    test.vm.provision "shell", inline: <<-SHELL
+        hostnamectl set-hostname test
+        yum install -y initscripts bats ansible-lint
+        echo "dump_ip=#{ENV['DUMP_IP']}
+log_ip=#{ENV['LOG_IP']}
+monitor_ip=#{ENV['MONITOR_IP']}
+ids_ip=#{ENV['IDS_IP']}
+test_ip=#{ENV['TEST_IP']}" >> /vagrant/tests/vars.bash
+        bats /vagrant/tests/*.bats
+    SHELL
+  end
+#################
+# build server
+  config.vm.define "build" do |build|
+    build.vm.provision "shell", inline: <<-SHELL
+        hostnamectl set-hostname build
+        cp /vagrant/files/ids_repo/etc/yum.repos.d/ids.repo /etc/yum.repos.d
+        cp /vagrant/files/icinga_repo/etc/yum.repos.d/icinga2.repo /etc/yum.repos.d
+        cp /vagrant/files/icinga_repo/etc/pki/rpm-gpg/RPM-GPG-KEY-icinga /etc/pki/rpm-gpg
+        rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-icinga
+        yum clean all
+        yum install -y syslinux mkisofs isomd5sum createrepo grub2-efi-x64-modules dosfstools genisoimage repotrack
+    SHELL
+  end
+end

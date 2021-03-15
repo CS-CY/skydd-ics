@@ -1,0 +1,17 @@
+python-inotify
+epel-release
+rsyslog
+httpd
+policycoreutils
+policycoreutils-python
+checkpolicy
+perl
+perl-CGI
+perl-Pod-Perldoc
+perl-CGI
+perl-JSON
+perl-URI
+perl-URI-Encode
+perl-IPC-Run
+perl-PerlIO-gzip
+firefox

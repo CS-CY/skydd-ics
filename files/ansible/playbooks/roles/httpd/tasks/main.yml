@@ -1,0 +1,31 @@
+---
+- name: Enable and start the httpd server
+  systemd:
+    name: httpd
+    enabled: yes
+    state: started
+- name: check if foss_httpd.pp exist
+  stat:
+    path: /usr/share/selinux/packages/foss-httpd/foss_httpd.pp
+  register: s
+- name: check if foss_httpd is installed
+  shell: |
+    set -o pipefail
+    semanage module -l | grep foss_httpd
+  register: result
+  failed_when: result.rc > 1
+  changed_when: result.rc != 0
+- name: Install selinux policy package foss_httpd.pp
+  command: /sbin/semodule -i /usr/share/selinux/packages/foss-httpd/foss_httpd.pp
+  register: semodule
+  when: s.stat.exists and result.rc != 0
+  notify: restorecon
+- name: Run restore context to reload selinux
+  command: /sbin/restorecon -R -v /var
+  when: s.stat.exists and result.rc != 0
+- name: listen on localhost
+  replace:
+    path: /etc/httpd/conf/httpd.conf
+    regexp: '^(Listen)\s+80\s*$'
+    replace: '\1 127.0.0.1:80'
+  notify: restart httpd

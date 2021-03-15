@@ -1,0 +1,100 @@
+---
+- name: check if icinga.pp exist
+  stat:
+    path: /usr/share/selinux/packages/foss-monitor/icinga.pp
+  register: s
+- name: check if icinga module is installed
+  shell: |
+    set -o pipefail
+    semanage module -l | grep icinga
+  register: result
+  failed_when: result.rc > 1
+  changed_when: result.rc != 0
+- name: Install the icinga selinux policy package
+  command: /usr/sbin/semodule -i /usr/share/selinux/packages/foss-monitor/icinga.pp
+  notify: restorecon
+  when: s.stat.exists and result.rc != 0
+
+# apache talks to postgres over a localhost socket (maybe should be a unix domain socket?)
+- name: set required sebooleans..
+  seboolean:
+    name: "{{ item }}"
+    state: yes
+    persistent: yes
+  loop:
+    - httpd_can_network_connect
+    - httpd_can_network_connect_db
+
+- name: Add the apache user to the icingaweb2 group
+  user:
+    name: apache
+    groups: icingaweb2
+    append: yes
+- name: Fix permissions on dir
+  file:
+    dest: /etc/icinga2/conf.d
+    owner: icinga
+    group: icinga
+    mode: 0755
+    state: directory
+- name: Fix permissions on files now that the icinga user exists
+  file:
+    dest: "{{ item }}"
+    owner: icinga
+    group: icinga
+    state: file
+    mode: 0640
+  loop:
+    - /etc/icinga2/conf.d/app.conf
+    - /etc/icinga2/conf.d/downtimes.conf
+    - /etc/icinga2/conf.d/foss-notifications.conf
+    - /etc/icinga2/conf.d/groups.conf
+    - /etc/icinga2/conf.d/notifications.conf
+    - /etc/icinga2/conf.d/templates.conf
+    - /etc/icinga2/conf.d/users.conf
+    - /etc/icinga2/conf.d/commands.conf
+    - /etc/icinga2/conf.d/foss-commands.conf
+    - /etc/icinga2/conf.d/foss-templates.conf
+    - /etc/icinga2/conf.d/hosts.conf
+    - /etc/icinga2/conf.d/services.conf
+    - /etc/icinga2/conf.d/timeperiods.conf
+- name: check if php.ini exists
+  stat:
+    path: /etc/php.ini
+  register: t
+- name: Get current time zone
+  shell: |
+    set -o pipefail
+    /bin/timedatectl | /bin/awk '/Time zone:/{print $3}'
+  register: time_zone
+  when: t.stat.exists
+  changed_when: time_zone.rc != 0
+- name: set time zone in php.ini
+  ini_file:
+    path: /etc/php.ini
+    section: Date
+    option: date.timezone
+    value: "{{ time_zone.stdout }}"
+  when: t.stat.exists
+- name: check if module ido-pgsql exists
+  stat:
+    path: /etc/icinga2/features-enabled/ido-pgsql.conf
+  register: link
+- name: enable ido-pgsql module
+  command: icinga2 feature enable ido-pgsql
+  when: not link.stat.exists
+- name: get php fpm service name
+  shell: |
+    set -o pipefail
+    /bin/rpm -qR icingaweb2 | /bin/awk '/php-fpm/{print $1}'
+  register: php_fpm
+  changed_when: php_fpm.rc != 0
+- name: Enable icinga services
+  systemd:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  loop:
+    - icinga2
+    - httpd
+    - "{{ php_fpm.stdout }}"

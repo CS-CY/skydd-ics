@@ -1,0 +1,46 @@
+server.document-root = "/var/www/html"
+
+{% if not expose_https %}
+# Okrypterat, nås enbart lokalt
+server.port = 80
+server.bind = "127.0.0.1"
+# Tillåt dir-listing lokalt
+dir-listing.activate = "enable"
+{% else %}
+## Krypterat, nåbart externt.
+server.port = 443
+ssl.engine = "enable"
+ssl.pemfile = "/etc/pki/tls/private/dummy.pem"
+{% endif %}
+
+server.username = "lighttpd"
+server.groupname = "lighttpd"
+
+include "/etc/lighttpd/conf.d/mime.conf"
+
+index-file.names = ("index.html")
+static-file.exclude-extensions = ( ".php", ".pl", ".fcgi", ".scgi", ".cgi" )
+
+server.modules = (
+  "mod_access",
+  "mod_accesslog",
+  "mod_setenv",
+  "mod_cgi"
+)
+
+cgi.assign = ( 
+	   ".pl"  => "/usr/bin/perl",
+	   ".cgi" => "/usr/bin/perl",
+	   ".py"  => "/usr/bin/python" 
+)
+
+var.log_root = "/var/log/lighttpd"
+server.errorlog = log_root + "/error.log"
+accesslog.filename = log_root + "/access.log"
+
+server.tag = "httpd-server"
+setenv.add-response-header = (
+    "content-security-policy" => "default-src 'none'; style-src 'self'; font-src 'self'; script-src 'self'; img-src 'self'; connect-src 'self'",
+    "X-Frame-Options" => "DENY",
+    "x-content-type-options" => "nosniff",
+)

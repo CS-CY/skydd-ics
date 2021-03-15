@@ -1,0 +1,24 @@
+module dumper_tcpdump 1.0;
+
+require {
+	type NetworkManager_t;
+	type netutils_t;
+	type etc_t;
+	type user_home_t;
+	type user_home_dir_t;
+	type systemd_unit_file_t;
+	class dir { write search add_name setattr create getattr };
+	class file { open write create setattr getattr };
+	class process { signal };
+	class service { status start stop };
+}
+
+allow netutils_t user_home_dir_t:file { write create setattr getattr open };
+allow netutils_t user_home_dir_t:dir { search write add_name setattr create getattr };
+allow netutils_t user_home_t:file { write create setattr getattr open };
+
+
+allow NetworkManager_t netutils_t:process signal;
+allow NetworkManager_t etc_t:service { status start stop };
+allow NetworkManager_t systemd_unit_file_t:service { status start stop };
+

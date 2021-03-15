@@ -1,0 +1,15 @@
+[Unit]
+Description=Barnyard2 Service
+After=mariadb.service
+Requires=mariadb.service
+
+[Service]
+ExecStart=/usr/local/bin/barnyard2 -c /etc/snort/barnyard2.conf -d /var/log/snort -f snort.log -w /var/log/snort/barnyward2.waldo  -u snort -g snort
+Restart=always
+RestartSec=10s
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target
+

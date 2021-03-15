@@ -1,0 +1,2 @@
+# S7COMM/iso on tcp
+alert tcp any any -> any 102 (content: "|03 00 00 21 02 f0 80 32 07 00 00 00 00 00 08 00 08 00 01 12 04 11 44 01 00 ff 09 00 04 00 11 00 01|"; offset: 0; depth: 33; msg: "S7 Nmap s7-info NSE Request CPU Function Read SZL attempt";sid:1111303;priority:1;rev:1; classtype:successful-recon-limited;)

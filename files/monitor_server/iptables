@@ -1,0 +1,18 @@
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+-N LOGGING
+
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -p icmp -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+# Allow incoming SSH
+#-A INPUT -m state --state NEW -p tcp --dport 22 -j ACCEPT
+# Allow incoming HTTPS
+#-A INPUT -m state --state NEW -p tcp --dport 443 -j ACCEPT
+-A INPUT -j LOGGING
+
+-A LOGGING -m limit --limit 2/min -j LOG --log-prefix "IPTABLES-Dropped: " --log-level 4
+-A LOGGING -j REJECT --reject-with icmp-host-prohibited
+COMMIT

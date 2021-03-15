@@ -1,0 +1,9 @@
+---
+- import_playbook: foss.yml
+
+- hosts: foss
+  gather_facts: no
+  connection: local
+  roles:
+    - { role: common }
+    - { role: httpd }

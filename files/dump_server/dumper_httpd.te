@@ -1,0 +1,13 @@
+module dumper_httpd 1.0;
+
+require {
+	type httpd_t;
+	type httpd_sys_script_t;
+	type user_home_dir_t;
+	class dir { read };
+	class file { open getattr read ioctl };
+}
+
+allow httpd_t user_home_dir_t:dir read;
+allow httpd_t user_home_dir_t:file { getattr open read ioctl };
+allow httpd_sys_script_t user_home_dir_t:file { getattr open read };

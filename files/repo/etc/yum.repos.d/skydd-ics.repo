@@ -1,0 +1,6 @@
+[skydd-ics]
+name=Skydd ICS
+baseurl=https://skyddics.msb.se/repos/skyddics
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-skydd_ics

@@ -1,0 +1,37 @@
+---
+# allow apache reading incoming log. The get_files.cgi and get_file.cgi is hardcoded to only allow
+# reading incoming* files and the SELinux rules will not allow apache to read anything else.
+# This might be ok since all messages from other hosts that we collect end up in it which is what
+# we are interested in.
+- name: create apache acl for incomminf logs
+  acl:
+    path: /var/log/incoming
+    entity: apache
+    etype: user
+    permissions: r
+    state: present
+
+- name: check if logger.pp exist
+  stat:
+    path: /usr/share/selinux/packages/foss-simple-log/logger.pp
+  register: s
+- name: check if logger module is installed
+  shell: |
+    set -o pipefail
+    semanage module -l | grep logger
+  register: result
+  failed_when: result.rc > 1
+  changed_when: result.rc != 0
+- name: Install simple log selinux policy package logger.pp
+  command: /usr/sbin/semodule -i /usr/share/selinux/packages/foss-simple-log/logger.pp
+  notify: restorecon
+  when: s.stat.exists and result.rc != 0
+
+- name: Enable rsyslog
+  service:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  loop:
+    - rsyslog
+

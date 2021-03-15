@@ -1,0 +1,1 @@
+/var/www/html/status/cgi(/.*)? gen_context(system_u:object_r:httpd_sys_script_exec_t,s0)

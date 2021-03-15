@@ -1,0 +1,15 @@
+[Unit]
+Description=The snorby server
+After=barnyard2.service
+ 
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/opt/rh/httpd24/root/var/www/html/snorby/snorby-start
+ExecStop=/opt/rh/httpd24/root/var/www/html/snorby/snorby-stop
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=snorby
+ 
+[Install]
+WantedBy=multi-user.target

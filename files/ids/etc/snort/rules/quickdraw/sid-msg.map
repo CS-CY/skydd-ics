@@ -1,0 +1,59 @@
+1111001 || SCADA_IDS: Modbus TCP - Force Listen Only Mode || url,digitalbond.com/tools/quickdraw/modbus-tcp-rules
+1111002 || SCADA_IDS: Modbus TCP - Restart Communications Option || url,digitalbond.com/tools/quickdraw/modbus-tcp-rules
+1111003 || SCADA_IDS: Modbus TCP - Clear Counters and Diagnostic Registers || url,digitalbond.com/tools/quickdraw/modbus-tcp-rules
+1111004 || SCADA_IDS: Modbus TCP - Read Device Identification || url,digitalbond.com/tools/quickdraw/modbus-tcp-rules
+1111005 || SCADA_IDS: Modbus TCP - Report Server Information || url,digitalbond.com/tools/quickdraw/modbus-tcp-rules
+1111006 || SCADA_IDS: Modbus TCP - Unauthorized Read Request to a PLC || url,digitalbond.com/tools/quickdraw/modbus-tcp-rules
+1111007 || SCADA_IDS: Modbus TCP - Unauthorized Write Request to a PLC || url,digitalbond.com/tools/quickdraw/modbus-tcp-rules
+1111008 || SCADA_IDS: Modbus TCP - Illegal Packet Size, Possible DOS Attack || url,digitalbond.com/tools/quickdraw/modbus-tcp-rules
+1111009 || SCADA_IDS: Modbus TCP - Non-Modbus Communication on TCP Port 502 || url,digitalbond.com/tools/quickdraw/modbus-tcp-rules
+1111010 || SCADA_IDS: Modbus TCP - Slave Device Busy Exception Code Delay || url,digitalbond.com/tools/quickdraw/modbus-tcp-rules
+1111011 || SCADA_IDS: Modbus TCP - Acknowledge Exception Code Delay || url,digitalbond.com/tools/quickdraw/modbus-tcp-rules
+1111012 || SCADA_IDS: Modbus TCP - Incorrect Packet Length, Possible DOS Attack || url,digitalbond.com/tools/quickdraw/modbus-tcp-rules
+1111013 || SCADA_IDS: Modbus TCP - Points List Scan || url,digitalbond.com/tools/quickdraw/modbus-tcp-rules
+1111014 || SCADA_IDS: Modbus TCP - Function Code Scan || url,digitalbond.com/tools/quickdraw/modbus-tcp-rules
+1111015 || Schneider Modicon Function Code 90 - Download Ladder Logic Started
+1111016 || Schneider Modicon Function Code 90 - Upload Ladder Logic Started
+1111017 || Schneider Modicon Function Code 90 - Upload Ladder Logic Started
+1111101 || Discovery Attempt Via Redpoint Nmap NSE Script (Niagara Fox TCP/1911)
+1111102 || Discovery Attempt Via Redpoint Nmap NSE Script (Niagara Fox TCP/4911)
+1111201 || SCADA_IDS: DNP3 - Disable Unsolicited Responses || url,digitalbond.com/tools/quickdraw/dnp3-rules
+1111202 || SCADA_IDS: DNP3 - Non-DNP3 Communication on a DNP3 Port || url,digitalbond.com/tools/quickdraw/dnp3-rules
+1111203 || SCADA_IDS: DNP3 - Unsolicited Response Storm || url,digitalbond.com/tools/quickdraw/dnp3-rules
+1111204 || SCADA_IDS: DNP3 - Cold Restart From Authorized Client || url,digitalbond.com/tools/quickdraw/dnp3-rules
+1111205 || SCADA_IDS: DNP3 - Cold Restart From Unauthorized Client || url,digitalbond.com/tools/quickdraw/dnp3-rules
+1111206 || SCADA_IDS: DNP3 - Unauthorized Read Request to a PLC || url,digitalbond.com/tools/quickdraw/dnp3-rules
+1111207 || SCADA_IDS: DNP3 - Unauthorized Write Request to a PLC || url,digitalbond.com/tools/quickdraw/dnp3-rules
+1111208 || SCADA_IDS: DNP3 - Unauthorized Miscellaneous Request to a PLC || url,digitalbond.com/tools/quickdraw/dnp3-rules
+1111209 || SCADA_IDS: DNP3 - Stop Application || url,digitalbond.com/tools/quickdraw/dnp3-rules
+1111210 || SCADA_IDS: DNP3 - Warm Restart || url,digitalbond.com/tools/quickdraw/dnp3-rules
+1111211 || SCADA_IDS: DNP3 - Broadcast Request from Authorized Client || url,digitalbond.com/tools/quickdraw/dnp3-rules
+1111212 || SCADA_IDS: DNP3 - Broadcast Request from Unauthorized Client || url,digitalbond.com/tools/quickdraw/dnp3-rules
+1111213 || SCADA_IDS: DNP3 - Points List Scan || url,digitalbond.com/tools/quickdraw/dnp3-rules
+1111214 || SCADA_IDS: DNP3 - Function Code Scan || url,digitalbond.com/tools/quickdraw/dnp3-rules
+1111301 || S7 Enumerate Redpoint NSE Request CPU Function Read SZL attempt
+1111302 || S7 Enumerate Redpoint NSE Request CPU Function Read SZL attempt From Non Authorized Host
+1111401 || OMRON FINS TCP Read Controller Attempt
+1111402 || OMRON FINS UDP Read Controller Attempt
+1111403 || OMRON FINS TCP Read Controller Attempt
+1111404 || OMRON FINS UDP Read Controller Attempt
+1111517 || TCP EtherNet/IP Request Identity Attempt Via Redpoint Nmap NSE
+1111518 || UDP EtherNet/IP Request Identity Attempt Via Redpoint Nmap NSE
+1111701 || BACnet Foreign Device Join Attempt
+1111702 || BACnet foreign Device Join Attempt From Non Authorized Host
+1111703 || BACnet Register-Foreign-Device NAK
+1111704 || BACnet Read Property Attempt
+1111705 || BACnet Read Property Attempt From Non Authorized Host
+1111706 || BACnet Read-Foreign-Device-Table Attempt
+1111707 || BACnet Read-Foreign-Device-Table NAK, Device was denied access to reading the FDT
+1111708 || BACnet Read-Broadcast-Distribution-Table Attempt
+1111709 || BACnet Read-Broadcast-Distribution-Table NAK, Device was denied access to reading the BDT
+11112011 || SCADA_IDS: DNP3 - Disable Unsolicited Responses || url,digitalbond.com/tools/quickdraw/dnp3-rules
+11112031 || SCADA_IDS: DNP3 - Unsolicited Response Storm || url,digitalbond.com/tools/quickdraw/dnp3-rules
+11112041 || SCADA_IDS: DNP3 - Cold Restart From Authorized Client || url,digitalbond.com/tools/quickdraw/dnp3-rules
+11112051 || SCADA_IDS: DNP3 - Cold Restart From Unauthorized Client || url,digitalbond.com/tools/quickdraw/dnp3-rules
+11112061 || SCADA_IDS: DNP3 - Unauthorized Read Request to a PLC || url,digitalbond.com/tools/quickdraw/dnp3-rules
+11112091 || SCADA_IDS: DNP3 - Stop Application || url,digitalbond.com/tools/quickdraw/dnp3-rules
+11112101 || SCADA_IDS: DNP3 - Warm Restart || url,digitalbond.com/tools/quickdraw/dnp3-rules
+11112151 || SCADA_IDS: DNP3 - Time Change Attempt || url,digitalbond.com/tools/quickdraw/dnp3-rules
+11112161 || SCADA_IDS: DNP3 - Failed Checksum Error || url,digitalbond.com/tools/quickdraw/dnp3-rules

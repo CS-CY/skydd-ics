@@ -1,0 +1,15 @@
+# must be done before: 
+# sudo mkdir -p /home/tcpdump; sudo chown -R tcpdump.tcpdump /home/tcpdump
+
+if=$1
+dir=$2
+
+if [ "X$2" = "Xup" ]; then
+	echo "Dumper dispatch-script invoked with <$1> <$2>";
+	systemctl start tcpdump@$if
+fi
+
+if [ "X$2" = "Xdown" ]; then
+	echo "Dumper dispatch-script invoked with <$1> <$2>"
+	systemctl stop tcpdump@$if
+fi

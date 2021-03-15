@@ -1,0 +1,3 @@
+---
+- name: restorecon
+  command: /sbin/restorecon -R -v /var

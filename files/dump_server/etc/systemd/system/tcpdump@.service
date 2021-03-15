@@ -1,0 +1,14 @@
+[Unit]
+Description=Dumper Service on %I
+After=network.target
+# After=network-online.target
+
+[Service]
+ExecStart=/usr/sbin/tcpdump -n -i %I -C 100 -G 86400 -w /home/tcpdump/%I-%F-%T.pcap
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target
+

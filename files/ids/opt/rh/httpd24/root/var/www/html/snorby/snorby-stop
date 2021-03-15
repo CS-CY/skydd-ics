@@ -1,0 +1,4 @@
+#!/bin/bash
+
+. /opt/rh/ruby193/enable
+cd /opt/rh/httpd24/root/var/www/html/snorby; RAILS_ENV=production /opt/rh/ruby193/root/usr/bin/rails runner 'Snorby::Worker.stop'

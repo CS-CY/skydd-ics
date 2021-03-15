@@ -1,0 +1,36 @@
+---
+all:
+  children:
+    foss: # used by installations
+      hosts:
+        localhost:
+    build: # used by vagrant
+      hosts:
+        localhost:
+      vars:
+        disable_sshd: False
+    dump: # used by vagrant
+      hosts:
+        localhost:
+      vars:
+        disable_sshd: False
+    log: # used by vagrant
+      hosts:
+        localhost:
+      vars:
+        disable_sshd: False
+    ids: # used by vagrant
+      hosts:
+        localhost:
+      vars:
+        disable_sshd: False
+    monitor: # used by vagrant
+      hosts:
+        localhost:
+      vars:
+        disable_sshd: False
+    test: # used by vagrant
+      hosts:
+        localhost:
+      vars:
+        disable_sshd: False

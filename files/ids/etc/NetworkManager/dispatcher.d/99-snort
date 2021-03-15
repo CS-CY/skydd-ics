@@ -1,0 +1,12 @@
+if=$1
+dir=$2
+
+if [ "X$2" = "Xup" ]; then
+	echo "Dumper dispatch-script invoked with <$1> <$2>";
+	systemctl start snort@$if
+fi
+
+if [ "X$2" = "Xdown" ]; then
+	echo "Dumper dispatch-script invoked with <$1> <$2>"
+	systemctl stop snort@$if
+fi

@@ -1,0 +1,16 @@
+[Unit]
+Description=Initial configuration of postgress
+After=syslog.target auditd.service firstboot-graphical.service gdm.service
+
+[Service]
+Type=oneshot
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=first-boot
+ExecStart=/bin/bash /root/init_pg.sh
+ExecStartPost=/bin/systemctl disable first-boot.service
+TimeoutSec=0
+RemainAfterExit=yes
+
+[Install]
+WantedBy=graphical.target

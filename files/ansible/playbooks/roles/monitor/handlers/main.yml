@@ -1,0 +1,7 @@
+---
+- name: restorecon
+  command: /sbin/restorecon -R "{{ item }}"
+  loop:
+    - /etc
+    - /var
+    - /usr

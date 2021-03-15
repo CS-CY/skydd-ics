@@ -1,0 +1,63 @@
+---
+# allow apache reading dumps
+- name: set acl on dir
+  acl:
+    path: /home/tcpdump
+    entity: apache
+    etype: user
+    permissions: rx
+    state: present
+
+- name: check if dumper_tcpdup.pp exist
+  stat:
+    path: /usr/share/selinux/packages/foss-traffic-capture/dumper_tcpdump.pp
+  register: s
+- name: check if dumper_tcpdump module is installed
+  shell: |
+    set -o pipefail
+    semanage module -l | grep dumper_tcpdump
+  register: result
+  changed_when: result.rc != 0
+  failed_when: result.rc > 1
+- name: Install traffic capture selinux policy package dumper_tcpdump
+  command: /usr/sbin/semodule -i /usr/share/selinux/packages/foss-traffic-capture/dumper_tcpdump.pp
+  notify: restorecon
+  when: s.stat.exists and result.rc != 0
+
+- name: check if dumper_httpd.pp exist
+  stat:
+    path: /usr/share/selinux/packages/foss-traffic-capture/dumper_httpd.pp
+  register: t
+- name: check if foss_httpd module is installed
+  shell: |
+    set -o pipefail
+    semanage module -l | grep dumper_httpd
+  register: result
+  changed_when: result.rc != 0
+  failed_when: result.rc > 1
+- name: Install traffic capture selinux policy package dumper_httpd
+  command: /usr/sbin/semodule -i /usr/share/selinux/packages/foss-traffic-capture/dumper_httpd.pp
+  notify: restorecon
+  when: t.stat.exists and result.rc != 0
+
+- name: set required sebooleans..
+  seboolean:
+    name: "{{ item }}"
+    state: yes
+    persistent: yes
+  loop:
+    - httpd_enable_homedirs
+    - httpd_read_user_content
+    - httpd_unified
+
+- name: Enable reaper
+  systemd:
+    name: reaper
+    enabled: yes
+    state: started
+    no_block: no
+
+- name: copy test scripts
+  copy:
+    src: root/test_full_disk.sh
+    dest: /root/test_full_disk.sh

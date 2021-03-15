@@ -1,0 +1,4 @@
+---
+disable_sshd: True
+simple_log: False
+expose_https: False

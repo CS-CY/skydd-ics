@@ -1,0 +1,16 @@
+module logger 1.0;
+
+require {
+    type var_log_t;
+    type httpd_t;
+    type httpd_sys_script_t;
+    type httpd_sys_content_t;
+    class file { read open write };
+    class dir { read };
+}
+
+#============= httpd_t ==============
+allow httpd_t var_log_t:file { read open };
+allow httpd_sys_script_t var_log_t:file { read open };
+allow httpd_sys_script_t var_log_t:dir { read };
+allow httpd_sys_script_t httpd_sys_content_t:file write;

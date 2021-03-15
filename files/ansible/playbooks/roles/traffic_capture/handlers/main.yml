@@ -1,0 +1,8 @@
+---
+- name: restorecon
+  command: /sbin/restorecon -R -v "{{ item }}"
+  loop:
+    - /var
+    - /etc
+    - /opt
+    - /home
